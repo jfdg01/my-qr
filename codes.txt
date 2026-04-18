@@ -1,0 +1,82 @@
+deviceid: Jf7a576b26b0a9d871175cc1f40a2eaa94032
+
+card number: V011612761
+
+{
+  "access_token": "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6ImQzYzg3YmJkLWJjNDctNDczNi05MDMxLWQ2OTJhZGZkYjBmZCJ9.eyJkYXRhIjp7ImF1dGgiOnsic2NvcGUiOiJtZW1iZXIifSwibWVtYmVyIjp7ImVtYWlsIjoiamF2aWVyLmZjby5kaWJvLmdvbWV6QGdtYWlsLmNvbSIsImVtcGxveWVlIjpmYWxzZSwibGNpZCI6IjMwODIiLCJwZW9wbGVJZCI6ImU2NWMwZTdmLWNmOGMtNDY5NS1hMzVhLWE0ODJhYzk4Y2RmZSJ9fSwiaWF0IjoxNzc2NTIxMjk4LCJleHAiOjE3NzY1NjQ0OTgsImlzcyI6IkJhc2ljLUZpdDpBdXRoU2VydmljZSJ9.AIWjD43rkKHYryoycIykhVu-CoWCEF7Y8YRfl1Wy_-Jv57Xrn4toPwCI9ELNqnXRE4Hx_vwcO8yvZfav3twUPn1TACF8arpcgKZ0uEleftgbYs7q54Bk1CXUJEf02e4_8QtljI4QWJ4vQfgOQ0YiAK0FY1Nx08mgi-plJ1jQGiibiBe9",
+  "token_type": "Bearer",
+  "expires_in": 1776564498,
+  "refresh_token": "80HvtywzVwc9S8wpW8jsdCMasBWRGRQC7VO2hTOePoY"
+}
+
+
+Full command:
+
+curl -s -X GET 'https://bfa.basic-fit.com/api/member/info' \
+        -H 'Authorization: Bearer
+      eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6ImQzYzg3YmJkLWJjNDctNDczNi05MD
+      MxLWQ2OTJhZGZkYjBmZCJ9.eyJkYXRhIjp7ImF1dGgiOnsic2NvcGUiOiJtZW1iZXIifSwibWV
+      tYmVyIjp7ImVtYWlsIjoiamF2aWVyLmZjby5kaWJvLmdvbWV6QGdtYWlsLmNvbSIsImVtcGxve
+      WVlIjpmYWxzZSwibGNpZCI6IjMwODIiLCJwZW9wbGVJZCI6ImU2NWMwZTdmLWNmOGMtNDY5NS1
+      hMzVhLWE0ODJhYzk4Y2RmZSJ9fSwiaWF0IjoxNzc2NTIxMjk4LCJleHAiOjE3NzY1NjQ0OTgsI
+      mlzcyI6IkJhc2ljLUZpdDpBdXRoU2VydmljZSJ9.AIWjD43rkKHYryoycIykhVu-CoWCEF7Y8Y
+      Rfl1Wy_-Jv57Xrn4toPwCI9ELNqnXRE4Hx_vwcO8yvZfav3twUPn1TACF8arpcgKZ0uEleftgb
+      Ys7q54Bk1CXUJEf02e4_8QtljI4QWJ4vQfgOQ0YiAK0FY1Nx08mgi-plJ1jQGiibiBe9' \
+        | python3 -m json.tool
+  ⎿  {
+         "member": {
+             "membershipType": "ultimate",
+             "id": "e65c0e7f-cf8c-4695-a35a-a482ac98cdfe",
+             "homeClubId": "475D8319-ED9D-4548-913B-EE249962BDEE",
+             "marketingId": "ed100bde-f8ea-4377-9725-66c3a69e42b2",
+             "name": "Javier Dibo",
+             "addOns": [
+                 "Yanga",
+                 "Sunbed",
+                 "LiveGX",
+                 "Sunbed",
+     "App"
+             ],
+             "articles": [
+                 "freeze",
+                 "yanga",
+                 "hydrobed",
+                 "livegx",
+                 "massagechair",
+                 "cryobed",
+                 "app",
+     "sportsbag"
+             ],
+             "cardnumber": "V011612761",
+             "dateofbirth": "2001-08-07T00:00:00.000",
+             "country": "ES",
+             "gender": "male",
+             "membershipnumber": "E61005626",
+             "email": "javier.fco.dibo.gomez@gmail.com",
+             "mobilephone": "",
+             "firstname": "Javier",
+             "prefix": "",
+             "lastname": "Dibo",
+             "homeClub": "Basic-Fit Ja\u00e9n Paseo de Espa\u00f1a",
+             "homeClubLcid": "3082",
+             "deviceId": "Jf7a576b26b0a9d871175cc1f40a2eaa94032",
+             "accessMethod": "qr",
+             "externalId": "003R600000WCIOlIAP",
+             "latestMembershipStartDate": "2026-04-16T00:00:00.000",
+             "latestMembershipEndDate": "",
+             "hasDebt": false,
+             "membershipOptions": {
+                 "LinkedServices": [
+     "ultimate_friends_unlimited"
+                 ]
+             },
+             "restrictedEntryTime": 180,
+             "canUnfreeze": false,
+             "canInviteFriend": true
+         },
+         "qrState": {
+             "hasQrAccess": false,
+             "shouldSwap": false,
+             "hasActiveSecureDeviceId": false
+         }
+     }

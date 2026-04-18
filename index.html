@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ff4600">
+    <title>Gym QR Generator</title>
+    <!-- SEO & Meta Tags -->
+    <meta name="description"
+        content="Generate your gym access QR Code for free online. Compatible with iPhone and Android, multi-account, works offline (PWA). Simple, fast and without the official app.">
+    <meta name="keywords"
+        content="gym, qr code, generator, gym access, gym qr, gym card, web app, pwa, iphone, android, free, no app, sport, fitness">
+    <meta name="robots" content="index, follow">
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Gym QR Generator - Quick Access">
+    <meta property="og:description"
+        content="Generate your gym access QR code in one second. Works offline, multi-account and dark mode.">
+    <meta property="og:type" content="website">
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+    <script src="qrcode.min.js"></script>
+</head>
+
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
+
+    <div class="card">
+        <h1>Gym QR Generator</h1>
+
+        <div id="loginForm">
+            <button class="help-trigger" onclick="toggleModal(true)">Where to find my info?</button>
+
+            <div class="profile-manager">
+                <select id="profileSelect" class="profile-select" onchange="loadProfile()">
+                    <option value="">New profile</option>
+                </select>
+                <button class="btn-icon" id="favBtn" onclick="toggleFavorite()"
+                    title="Favorite (Auto-start)">☆</button>
+                <button class="btn-icon" onclick="saveProfile()" title="Save">💾</button>
+                <button class="btn-icon" onclick="deleteProfile()" title="Delete">🗑️</button>
+            </div>
+
+            <div class="form-group" id="magicUrlSection">
+                <label for="magicUrl">Login via URL (Magic Link)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="magicUrl" placeholder="Paste the login URL here..."
+                        oninput="handleMagicUrlInput(this)">
+                </div>
+                <div id="magicUrlMsg" class="validation-msg" style="color: var(--success-color)">Info retrieved!
+                </div>
+                <div class="divider">or</div>
+            </div>
+
+            <div class="form-group">
+                <label for="cardNumber">Card Number</label>
+                <div class="input-wrapper">
+                    <input type="text" id="cardNumber" placeholder="Ex: V012345678" oninput="validateCard()">
+                    <button class="input-toggle" onclick="toggleInput('cardNumber', this)">👁️</button>
+                </div>
+                <div id="cardError" class="validation-msg">Invalid format (Ex: V123456789)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="deviceId">Device ID</label>
+                <div class="input-wrapper">
+                    <input type="password" id="deviceId" placeholder="Ex: 8d20fc96-..." oninput="validateDevice()">
+                    <button class="input-toggle" onclick="toggleInput('deviceId', this)">👁️</button>
+                </div>
+                <div id="deviceError" class="validation-msg">Invalid device ID format</div>
+            </div>
+
+            <button class="secondary" onclick="fillExample()" style="margin-bottom: 10px;">Use example values</button>
+            <button onclick="handleLogin()">Generate QR Code</button>
+            <button id="resetBtn" class="secondary hidden" onclick="resetForm()"
+                style="margin-top: 10px;">Reset</button>
+        </div>
+
+        <div id="qrDisplay" class="hidden">
+            <div id="qrcode" onclick="toggleFullscreen()"></div>
+            <button class="exit-fullscreen" onclick="toggleFullscreen()">Exit fullscreen</button>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+
+            <div class="cooldown-info">
+                ⏱️ After a scan, a <strong>3h cooldown</strong> is enforced before you can access another gym.
+            </div>
+
+            <div class="info">
+                QR Code generated locally.<br>
+                Refreshes every 5s.
+                <br>
+                <a href="#" onclick="toggleFullscreen(); return false;"
+                    style="color: var(--primary-color); font-size: 0.8rem;">[🔍 Fullscreen Mode]</a>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="secondary" onclick="shareUrl()">Share URL</button>
+                <button class="secondary" onclick="logout()"
+                    style="border: none; color: #999; font-size: 0.8rem; margin-top: 5px;">Edit /
+                    Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        v2.2
+    </div>
+
+    <div id="helpModal" class="modal-overlay" onclick="handleOverlayClick(event)">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Help</h2>
+                <button class="modal-close" onclick="toggleModal(false)">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="help-section">
+                    <h3>How to get my info?</h3>
+                    <p>To use the generator, you need your <strong>Card Number</strong>
+                        and your <strong>Device ID</strong>.</p>
+
+                    <h4>Step 1: Log out</h4>
+                    <p>On the device that normally generates QR codes, log out of the gym app.</p>
+
+                    <h4>Step 2: Login page</h4>
+                    <p>Open the login page using the "Login" button.</p>
+
+                    <h4>Step 3: Copy the popup URL</h4>
+                    <p>Copy the URL from the login popup by long-pressing it and selecting "Copy".</p>
+                    <img class="image-placeholder" src="./sc/login.gif">
+
+                    <h4>Step 4: Paste the URL</h4>
+                    <p><strong>• Option A (Easy):</strong> Paste the full URL directly into the "Login via URL" field.</p>
+                    <p><strong>• Option B (Advanced):</strong> Paste the URL elsewhere to manually extract
+                        <code>deviceID</code> and <code>card-Number</code>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">URL copied!</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
