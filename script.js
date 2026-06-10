@@ -252,9 +252,9 @@ function toggleInput(id, btn) {
 }
 
 function fillExample() {
-    document.getElementById('cardNumber').value = 'V012345678';
-    document.getElementById('deviceId').value = 'Jxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-    document.getElementById('constant').value = '3M9';
+    document.getElementById('cardNumber').value = 'V011612761';
+    document.getElementById('deviceId').value = 'J5eb75b07ecae846e7d2da8c4474303e6b938';
+    document.getElementById('constant').value = 'IRL';
     validateCard();
     validateDevice();
     validateConstant();
