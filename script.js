@@ -1,6 +1,7 @@
 let state = {
     cardNumber: '',
     deviceId: '',
+    constant: '',
     timerInterval: null,
     wakeLock: null
 };
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (urlParams.has('card') && urlParams.has('device')) {
         state.cardNumber = urlParams.get('card');
         state.deviceId = urlParams.get('device');
+        state.constant = urlParams.get('constant') || urlParams.get('guid') || '';
         showQrView();
     } else {
         const favIndex = profiles.findIndex(p => p.favorite);
@@ -69,14 +71,17 @@ function loadProfile() {
         const p = profiles[index];
         document.getElementById('cardNumber').value = p.card;
         document.getElementById('deviceId').value = p.device;
+        document.getElementById('constant').value = p.constant || '';
 
         favBtn.textContent = p.favorite ? '⭐' : '☆';
 
         validateCard();
         validateDevice();
+        if (p.constant) validateConstant();
     } else {
         document.getElementById('cardNumber').value = '';
         document.getElementById('deviceId').value = '';
+        document.getElementById('constant').value = '';
         favBtn.textContent = '☆';
         resetValidation();
     }
@@ -104,6 +109,15 @@ function handleMagicUrlInput(input) {
         // card-Number (magic link format) or card (share URL format)
         let newCard = params.get('card-Number') || params.get('cardNumber') || params.get('card_number') || params.get('card');
 
+        // constant (share URL format) — not present in the gym login link
+        let newConstant = params.get('constant') || params.get('guid');
+
+        if (newConstant) {
+            document.getElementById('constant').value = newConstant;
+            validateConstant();
+            found = true;
+        }
+
         if (newDevice) {
             document.getElementById('deviceId').value = newDevice;
             validateDevice();
@@ -130,7 +144,8 @@ function handleMagicUrlInput(input) {
                     if (confirm('Card detected! Do you want to save it as a new profile?')) {
                         const name = prompt('Profile name:', 'My Profile');
                         if (name) {
-                            profiles.push({ name, card: newCard, device: newDevice, favorite: false });
+                            const c = document.getElementById('constant').value.trim();
+                        profiles.push({ name, card: newCard, device: newDevice, constant: c, favorite: false });
                             saveProfilesToStorage();
                             updateProfileSelect();
                             document.getElementById('profileSelect').value = profiles.length - 1;
@@ -169,6 +184,7 @@ function toggleFavorite() {
 function saveProfile() {
     const card = document.getElementById('cardNumber').value.trim();
     const device = document.getElementById('deviceId').value.trim();
+    const constant = document.getElementById('constant').value.trim();
     const index = document.getElementById('profileSelect').value;
 
     if (!card || !device) {
@@ -189,7 +205,7 @@ function saveProfile() {
         isFav = profiles[index].favorite || false;
     }
 
-    const newProfile = { name, card, device, favorite: isFav };
+    const newProfile = { name, card, device, constant, favorite: isFav };
 
     if (index !== "") {
         profiles[index] = newProfile;
@@ -236,10 +252,12 @@ function toggleInput(id, btn) {
 }
 
 function fillExample() {
-    document.getElementById('cardNumber').value = 'V011612761';
-    document.getElementById('deviceId').value = 'Jf7a576b26b0a9d871175cc1f40a2eaa94032';
+    document.getElementById('cardNumber').value = 'V012345678';
+    document.getElementById('deviceId').value = 'Jxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    document.getElementById('constant').value = '3M9';
     validateCard();
     validateDevice();
+    validateConstant();
 }
 
 function validateCard() {
@@ -257,6 +275,18 @@ function validateDevice() {
     const input = document.getElementById('deviceId');
     const error = document.getElementById('deviceError');
     const regex = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9a-zA-Z]{10,})$/i;
+    const valid = regex.test(input.value.trim());
+
+    setValidationState(input, error, valid);
+    updateUiState();
+    return valid;
+}
+
+function validateConstant() {
+    const input = document.getElementById('constant');
+    const error = document.getElementById('constantError');
+    // The app's constant is a short alphanumeric token (typically 3 chars, e.g. "3M9").
+    const regex = /^[0-9a-z]{2,8}$/i;
     const valid = regex.test(input.value.trim());
 
     setValidationState(input, error, valid);
@@ -282,6 +312,7 @@ function updateUiState() {
 function resetForm() {
     document.getElementById('cardNumber').value = '';
     document.getElementById('deviceId').value = '';
+    document.getElementById('constant').value = '';
     document.getElementById('magicUrl').value = '';
 
     // Reset Select to default if it was on a profile? 
@@ -335,6 +366,7 @@ function setTheme(theme) {
 function handleLogin() {
     const cardInput = document.getElementById('cardNumber').value.trim();
     const deviceInput = document.getElementById('deviceId').value.trim();
+    const constantInput = document.getElementById('constant').value.trim();
 
     if (!cardInput || !deviceInput) {
         alert("Please fill in all fields");
@@ -343,14 +375,26 @@ function handleLogin() {
 
     const isCardValid = validateCard();
     const isDeviceValid = validateDevice();
+    const isConstantValid = constantInput === '' || validateConstant();
 
-    if (!isCardValid || !isDeviceValid) {
+    if (!isCardValid || !isDeviceValid || !isConstantValid) {
         alert("Please fix the format errors before generating.");
         return;
     }
 
+    if (!constantInput) {
+        const proceed = confirm(
+            "No Constant set.\n\n" +
+            "Basic-Fit now validates the constant against your live app session, so the QR " +
+            "will likely be rejected at the gate without it.\n\n" +
+            "Generate anyway?"
+        );
+        if (!proceed) return;
+    }
+
     state.cardNumber = cardInput;
     state.deviceId = deviceInput;
+    state.constant = constantInput;
 
     showQrView();
 }
@@ -373,6 +417,7 @@ function logout() {
 
     document.getElementById('cardNumber').value = state.cardNumber;
     document.getElementById('deviceId').value = state.deviceId;
+    document.getElementById('constant').value = state.constant;
 
     window.history.pushState({}, document.title, window.location.pathname);
 }
@@ -397,6 +442,7 @@ function shareUrl() {
     const url = new URL(window.location.href);
     url.searchParams.set('card', state.cardNumber);
     url.searchParams.set('device', state.deviceId);
+    if (state.constant) url.searchParams.set('constant', state.constant);
 
     navigator.clipboard.writeText(url.toString()).then(() => {
         showToast("URL copied to clipboard!");
@@ -444,7 +490,10 @@ function generateGUID() {
 
 async function generateQR() {
     const { cardNumber, deviceId } = state;
-    const guid = generateGUID();
+    // Basic-Fit validates this "constant" against the live app session, so it must
+    // be the value the official app is currently showing — not a random one.
+    // Fall back to a random GUID only if the user hasn't supplied one (legacy behavior).
+    const guid = state.constant ? state.constant : generateGUID();
     const timestamp = Math.floor(Date.now() / 1000);
 
     const dataToHash = `${cardNumber}${guid}${timestamp}${deviceId}`;

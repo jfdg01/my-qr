@@ -14,9 +14,15 @@ No need for the official app — access your gym quickly, even without an intern
 
 ## Requirements
 
-You need two pieces of information linked to your your gym account:
+You need three pieces of information:
 1. **Card Number** (`card-Number`)
 2. **Device ID** (`deviceID`)
+3. **Constant** — the 3-character code in the middle of the QR your official app is currently showing
+   (`GM2:CARD:`**`XXX`**`:TIMESTAMP:HASH`).
+
+> **Why the Constant?** The gym now validates this value against your live app session. A random
+> value is rejected at the gate, which is why generating without it stopped working. Read the current
+> code from the official app and paste it in; it stays valid until you kill & relaunch that app.
 
 ## How to get your info
 

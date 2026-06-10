@@ -72,6 +72,14 @@
                 <div id="deviceError" class="validation-msg">Invalid device ID format</div>
             </div>
 
+            <div class="form-group">
+                <label for="constant">Constant (from app QR)</label>
+                <div class="input-wrapper">
+                    <input type="text" id="constant" maxlength="8" placeholder="Ex: 3M9" oninput="validateConstant()">
+                </div>
+                <div id="constantError" class="validation-msg">Enter the 3-char code from your app's current QR</div>
+            </div>
+
             <button class="secondary" onclick="fillExample()" style="margin-bottom: 10px;">Use example values</button>
             <button onclick="handleLogin()">Generate QR Code</button>
             <button id="resetBtn" class="secondary hidden" onclick="resetForm()"
@@ -108,7 +116,7 @@
     </div>
 
     <div class="footer">
-        v2.2
+        v2.3
     </div>
 
     <div id="helpModal" class="modal-overlay" onclick="handleOverlayClick(event)">
@@ -120,8 +128,15 @@
             <div class="modal-content">
                 <div class="help-section">
                     <h3>How to get my info?</h3>
-                    <p>To use the generator, you need your <strong>Card Number</strong>
-                        and your <strong>Device ID</strong>.</p>
+                    <p>To use the generator, you need your <strong>Card Number</strong>,
+                        your <strong>Device ID</strong>, and the <strong>Constant</strong>.</p>
+
+                    <h4>About the Constant</h4>
+                    <p>Basic-Fit now checks the middle code of the QR against your live app session.
+                        Open the official app, decode the QR it currently shows
+                        (format <code>GM2:CARD:<strong>XXX</strong>:TIMESTAMP:HASH</code>), and copy the
+                        3-character value (<code>XXX</code>) into the <strong>Constant</strong> field.
+                        It stays valid until you kill &amp; relaunch the official app.</p>
 
                     <h4>Step 1: Log out</h4>
                     <p>On the device that normally generates QR codes, log out of the gym app.</p>
